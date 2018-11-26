@@ -1,7 +1,13 @@
 # coding: utf-8
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 
-app = Flask("project")
+app = Flask(__name__)
+
+stores = [{
+    'name': 'My Store',
+    'items': [{'name':'my item', 'price': 15.99 }]
+}]
+
 
 @app.route("/")
 def home():
@@ -28,5 +34,10 @@ def receive():
 @app.route("/info/<name>/<age>")
 def info(name = None, age = None):
 	return u"Name: {}<br>Age: {}".format(name, age), 200
+
+#get /store
+@app.route('/store')
+def get_stores():
+  return jsonify({'stores': stores})
 
 app.run(port=5000)
