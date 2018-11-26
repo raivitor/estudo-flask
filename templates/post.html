@@ -1,0 +1,13 @@
+<hthml>
+<body>
+	<h1>Formulário POST</h1>
+
+	<form action="{{ url_for('receive') }}" method="post">
+		Nome: <input type="text" name="name"/> <br>
+		Idade: <input type="text" name="age"/> <br>
+
+		<br><br>
+		<input type="submit" value="Enviar" />
+	</form>
+</body>
+</html>

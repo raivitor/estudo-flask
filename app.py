@@ -1,11 +1,27 @@
 # coding: utf-8
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask("project")
 
 @app.route("/")
-def home	():
+def home():
     return render_template("index.html", myname="Rai"), 200
+
+@app.route("/get")
+def get():
+	return render_template("get.html"), 200
+
+@app.route("/post")
+def post():
+	return render_template("post.html"), 200
+
+@app.route("/receive/", methods=['GET','POST'])
+def receive():
+	if request.method == "GET":
+		return u"Type GET!<br>name: {} <br>age: {}".format(request.args.get("name"),request.args.get("age")), 200
+	elif request.method == "POST":
+		return u"Type POST!<br>name: {} <br>age: {}".format(request.form["name"],request.form["age"]), 200
+
 
 @app.route("/info")
 @app.route("/info/<name>")
