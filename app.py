@@ -29,4 +29,4 @@ def receive():
 def info(name = None, age = None):
 	return u"Name: {}<br>Age: {}".format(name, age), 200
 
-app.run()
+app.run(port=5000)
