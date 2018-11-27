@@ -51,4 +51,12 @@ def create_store():
   stores.append(new_store)
   return jsonify(new_store)
 
+#get /store/<name> data: {name :}
+@app.route('/store/<string:name>')
+def get_store(name):
+  for store in stores:
+    if store['name'] == name:
+          return jsonify(store)
+  return jsonify ({'message': 'store not found'})
+
 app.run(port=5000)
