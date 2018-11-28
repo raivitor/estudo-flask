@@ -1,3 +1,4 @@
+from werkzeug.security import safe_str_cmp
 from user import User
 
 users = [
@@ -7,3 +8,8 @@ users = [
 
 username_table = {u.username: u for u in users}
 userid_table = {u.id: u for u in users}
+
+def authenticate(username, password):
+	user = username_table.get(username, None)
+	if user and safe_str_cpm(user.password, password):
+		return user
