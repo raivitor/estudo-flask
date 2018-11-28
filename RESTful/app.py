@@ -8,10 +8,11 @@ items = []
 
 class Item(Resource):
 	def get(self, name):
-		for item in items:
-			if item['name'] == name:
-				return item
-		return {'item': None}, 404
+		# Usei uma lambda function para verificar se o nome recebido existe.
+		# Vai ser retornado um filter object pelo filter, então usei o next para pegar
+		# o primeiro valor e caso não exista nenhum valor, este será None
+		item = next(filter(lambda x: x['name'] == name, items), None)
+		return {'item': None}, 200 if item else 404
 
 	def post(self, name):
 		data = requeste.get_json()
