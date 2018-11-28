@@ -14,7 +14,8 @@ class Item(Resource):
 		return {'item': None}, 404
 
 	def post(self, name):
-		item = {'name': name, 'price': 12.00}
+		data = requeste.get_json()
+		item = {'name': name, 'price': data['price']}
 		items.append(item)
 		return item, 201
 
