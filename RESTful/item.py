@@ -3,6 +3,8 @@ from flask_jwt import jwt_required
 import sqlite3
 
 class Item(Resource):
+	TABLE_NAME = 'items'
+
 	parser = reqparse.RequestParser()
 	parser.add_argument(
     'price',
@@ -33,8 +35,18 @@ class Item(Resource):
 		return item
 
 	def delete(self, name):
-		global items
-		items = list(filter(lambda x: x['name'] != name, items))
+		if not self.find_by_name(name):
+			return {'message': 'Item not found'}, 404
+
+		connection = sqlite3.connect('data.db')
+		cursor = connection.cursor()
+
+		query = "DELETE FROM {table} WHERE name=?".format(table=self.TABLE_NAME)
+		cursor.execute(query, (name,))
+
+		connection.commit()
+		connection.close()
+
 		return {'message': 'Item deleted'}
 
 	def put(self, name):
