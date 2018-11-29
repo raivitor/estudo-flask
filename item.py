@@ -51,13 +51,16 @@ class Item(Resource):
 
 	def put(self, name):
 		data = Item.parser.parse_args()
-		item = next(filter(lambda x: x['name'] == name, items), None)
-		if item is None:
-			item = {'name': name, 'price': data['price']}
-			items.append(item)
+		item = self.find_by_name(name)
+		updated_item = {'name': name, 'price': data['price']}
+		if item:
+			try:
+				Item.update(updated_item)
+			except:
+				return {"message": "An error occurred updating the item."}, 500
 		else:
-			item.update(data)
-		return item
+			return {'message': 'Item not found'}, 404
+		return updated_item
 
 	@classmethod
 	def find_by_name(cls, name):
@@ -79,6 +82,17 @@ class Item(Resource):
 
 		query = "INSERT INTO {table} VALUES(?, ?)".format(table=cls.TABLE_NAME)
 		cursor.execute(query, (item['name'], item['price']))
+
+		connection.commit()
+		connection.close()
+
+	@classmethod
+	def update(cls, item):
+		connection = sqlite3.connect('data.db')
+		cursor = connection.cursor()
+
+		query = "UPDATE {table} SET price=? WHERE name=?".format(table=cls.TABLE_NAME)
+		cursor.execute(query, (item['price'], item['name']))
 
 		connection.commit()
 		connection.close()
