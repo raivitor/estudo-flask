@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
+import sqlite3
 
 class Item(Resource):
 	parser = reqparse.RequestParser()
@@ -11,11 +12,17 @@ class Item(Resource):
 
 	@jwt_required()
 	def get(self, name):
-		# Usei uma lambda function para verificar se o nome recebido existe.
-		# Vai ser retornado um filter object pelo filter, então usei o next para pegar
-		# o primeiro valor e caso não exista nenhum valor, este será None
-		item = next(filter(lambda x: x['name'] == name, items), None)
-		return {'item': item}, 200 if item else 404
+		connection = sqlite3.connect('data.db')
+		cursor = connection.cursor()
+
+		query = "SELECT * FROM items WHERE name=?"
+		result = cursor.execute(query, (name,))
+		row = result.fetchone()
+		connection.close()
+
+		if row:
+			return {'item': {'name': row[0], 'price': row[1]}}
+		return {'message': 'Item not found'}, 404
 
 	def post(self, name):
 		if next(filter(lambda x: x['name'] == name, items), None):
