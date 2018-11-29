@@ -1,3 +1,4 @@
+from flask import jsonify
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
 import sqlite3
@@ -99,5 +100,14 @@ class Item(Resource):
 
 
 class ItemList(Resource):
+	TABLE_NAME = 'items'
+
 	def get(self):
-		return {'items': items}
+		connection = sqlite3.connect('data.db')
+		cursor = connection.cursor()
+
+		query = "SELECT * FROM {table}".format(table=self.TABLE_NAME)
+		result = cursor.execute(query).fetchall()
+		connection.close()
+
+		return jsonify({'items': result})
